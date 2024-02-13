@@ -21,7 +21,7 @@ float r4_uni() {
     return 0.5 + 0.2328306e-09 * (seed_in + (int) seed);
 }
 
-char ***gen_initial_grid(long long N, float density, int input_seed) {
+char ***alloc_grid(long long N) {
     int x, y, z;
     
     char ***grid = (char ***) malloc(N * sizeof(char **));
@@ -46,6 +46,14 @@ char ***gen_initial_grid(long long N, float density, int input_seed) {
         for (y = 1; y < N; y++)
             grid[x][y] = grid[x][0] + y * N;
     }
+
+    return grid;
+}
+
+char ***gen_initial_grid(long long N, float density, int input_seed) {
+    int x, y, z;
+    
+    char ***grid = alloc_grid(N);
 
     init_r4uni(input_seed);
 
