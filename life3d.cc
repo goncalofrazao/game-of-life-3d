@@ -4,10 +4,18 @@ using namespace std;
 #include <omp.h>
 #include <iomanip> // setprecision function
 #include <unistd.h> // sleep function
+#include <cstring> // memcpy function
 
 #include "grid.hh"
 
 #define N_SPECIES 9
+
+typedef struct {
+    int n;
+    int generation;
+} cell;
+
+cell max_cells[N_SPECIES];
 
 char next_state(int x, int y, int z, char ***grid, long long N) {
     static int dx[] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -79,29 +87,59 @@ char next_state(int x, int y, int z, char ***grid, long long N) {
 }
 
 void print_result(char ***grid, long long N) {
-    // print board
+    for (int i = 0; i < N_SPECIES; i++) {
+        cout << i + 1 << " " << max_cells[i].n << " " << max_cells[i].generation << endl;
+    }
+}
+
+void init_cell(cell *cells, int i) {
+    for (int j = 0; j < N_SPECIES; j++) {
+        cells[j].n = 0;
+        cells[j].generation = i;
+    }
+}
+
+void count_cells(char ***grid, long long N, cell *cells) {
     for (int x = 0; x < N; x++) {
         for (int y = 0; y < N; y++) {
             for (int z = 0; z < N; z++) {
-                cout << (((int) grid[x][y][z] == 0) ? ' ' : (char) (grid[x][y][z] + '0')) << " ";
+                if ((int) grid[x][y][z] != 0) {
+                    cells[(int) grid[x][y][z] - 1].n++;
+                }
             }
-            cout << endl;
         }
-        cout << endl << endl;
+    }
+}
+
+void get_max(cell *cells) {
+    for (int i = 0; i < N_SPECIES; i++) {
+        if (cells[i].n > max_cells[i].n) {
+            memcpy(&max_cells[i], &cells[i], sizeof(cell));
+        }
     }
 }
 
 void simulation(char ***grid, long long N, int generations) {
     char ***new_grid = alloc_grid(N), ***temp;
+    
+    init_cell(max_cells, 0);
+    count_cells(grid, N, max_cells);
 
     for (int i = 0; i < generations; i++) {
+        cell cells[N_SPECIES];
+        init_cell(cells, i + 1);
+
         for (int x = 0; x < N; x++) {
             for (int y = 0; y < N; y++) {
                 for (int z = 0; z < N; z++) {
                     new_grid[x][y][z] = next_state(x, y, z, grid, N);
+                    if ((int) new_grid[x][y][z] != 0)
+                        cells[(int) new_grid[x][y][z] - 1].n++;
                 }
             }
         }
+
+        get_max(cells);
         
         temp = grid;
         grid = new_grid;
