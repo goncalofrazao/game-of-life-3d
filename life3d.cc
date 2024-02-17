@@ -15,85 +15,50 @@ typedef struct {
     int generation;
 } cell;
 
-cell max_cells[N_SPECIES];
+cell max_cells[N_SPECIES + 1];
 
 char next_state(int x, int y, int z, char ***grid, long long N) {
-    static int dx[] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-    static int dy[] = {-1, -1, -1, 0, 0, 0, 1, 1, 1, -1, -1, -1, 0, 0, 1, 1, 1, -1, -1, -1, 0, 0, 0, 1, 1, 1};
-    static int dz[] = {-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1};
-
-    int ax, ay, az;
-
+    static int ax, ay, az;
     int sum = 0;
+    int n_species[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    // death cell
-    if ((int) grid[x][y][z] == 0) {
-        int n_species[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-        
-        // count neighbors and number of each species
-        for (int i = 0; i < 26; i++) {
-            if (sum > 10 || (i - sum) > 19) {
-                break;
+    for(int i = -1; i <= 1; i++) {
+        ax = (x + i) % N;
+        for(int j = -1; j <= 1; j++) {
+            ay = (y + j) % N;
+            for(int k = -1; k <= 1; k++) {
+                if (i == 0 && j == 0 && k == 0) continue;
+                az = (z + k) % N;
+                sum += ((int) grid[ax][ay][az] != 0);
+                n_species[(int) grid[ax][ay][az]]++;
             }
-
-            ax = (x + dx[i] + N) % N;
-            ay = (y + dy[i] + N) % N;
-            az = (z + dz[i] + N) % N;
-            if ((int) grid[ax][ay][az] != 0) {
-                sum++;
-                n_species[(int) grid[ax][ay][az] - 1]++;
-            }
-        }
-
-        // keep cell dead
-        if (sum < 7 || sum > 10) {
-            return (char) 0;
-        }
-        // birth cell
-        else {
-            int max = 0;
-            for (int i = 1; i < N_SPECIES; i++) {
-                if (n_species[i] > n_species[max]) {
-                    max = i;
-                }
-            }
-            return (char) (max + 1);
         }
     }
-    // alive cell
+
+    x %= N; y %= N; z %= N;
+    if ((int) grid[x][y][z]) {
+        if (sum > 4 && sum < 14) return (char) grid[x][y][z];
+        else return (char) 0;
+    }
     else {
-        for (int i = 0; i < 26; i++) {
-            if (sum > 13 || (i - sum) > 21) {
-                break;
-            }
-
-            ax = (x + dx[i] + N) % N;
-            ay = (y + dy[i] + N) % N;
-            az = (z + dz[i] + N) % N;
-            if ((int) grid[ax][ay][az] != 0) {
-                sum++;
-            }
+        if (sum > 6 && sum < 11) {
+            int max = 1;
+            for (int i = 2; i <= N_SPECIES; i++)
+                if (n_species[i] > n_species[max]) max = i;
+            return (char) max;
         }
-
-        // kill cell
-        if (sum < 5 || sum > 13) {
-            return (char) 0;
-        }
-        // keep cell alive
-        else {
-            return (char) grid[x][y][z];
-        }
+        else return (char) 0;
     }
 }
 
 void print_result(char ***grid, long long N) {
-    for (int i = 0; i < N_SPECIES; i++) {
-        cout << i + 1 << " " << max_cells[i].n << " " << max_cells[i].generation << endl;
+    for (int i = 1; i <= N_SPECIES; i++) {
+        cout << i << " " << max_cells[i].n << " " << max_cells[i].generation << endl;
     }
 }
 
 void init_cell(cell *cells, int i) {
-    for (int j = 0; j < N_SPECIES; j++) {
+    for (int j = 0; j <= N_SPECIES; j++) {
         cells[j].n = 0;
         cells[j].generation = i;
     }
@@ -103,16 +68,14 @@ void count_cells(char ***grid, long long N, cell *cells) {
     for (int x = 0; x < N; x++) {
         for (int y = 0; y < N; y++) {
             for (int z = 0; z < N; z++) {
-                if ((int) grid[x][y][z] != 0) {
-                    cells[(int) grid[x][y][z] - 1].n++;
-                }
+                cells[(int) grid[x][y][z]].n++;
             }
         }
     }
 }
 
 void get_max(cell *cells) {
-    for (int i = 0; i < N_SPECIES; i++) {
+    for (int i = 0; i <= N_SPECIES; i++) {
         if (cells[i].n > max_cells[i].n) {
             memcpy(&max_cells[i], &cells[i], sizeof(cell));
         }
@@ -126,15 +89,14 @@ void simulation(char ***grid, long long N, int generations) {
     count_cells(grid, N, max_cells);
 
     for (int i = 0; i < generations; i++) {
-        cell cells[N_SPECIES];
+        cell cells[N_SPECIES + 1];
         init_cell(cells, i + 1);
 
         for (int x = 0; x < N; x++) {
             for (int y = 0; y < N; y++) {
                 for (int z = 0; z < N; z++) {
-                    new_grid[x][y][z] = next_state(x, y, z, grid, N);
-                    if ((int) new_grid[x][y][z] != 0)
-                        cells[(int) new_grid[x][y][z] - 1].n++;
+                    new_grid[x][y][z] = next_state(x + N, y + N, z + N, grid, N);
+                    cells[(int) new_grid[x][y][z]].n++;
                 }
             }
         }
