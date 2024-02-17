@@ -3,7 +3,6 @@ using namespace std;
 
 #include <omp.h>
 #include <iomanip> // setprecision function
-#include <unistd.h> // sleep function
 #include <cstring> // memcpy function
 
 #include "grid.hh"
