@@ -1,4 +1,4 @@
-all: life3d life3d2 life3d3
+all: life3d
 
 LDFLAGS="-L/opt/homebrew/opt/libomp/lib"
 CPPFLAGS="-I/opt/homebrew/opt/libomp/include"
