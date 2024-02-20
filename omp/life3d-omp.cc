@@ -64,10 +64,24 @@ void init_cell(cell *cells, int i) {
 }
 
 void count_cells(char ***grid, long long N, cell *cells) {
-    for (int x = 0; x < N; x++) {
-        for (int y = 0; y < N; y++) {
-            for (int z = 0; z < N; z++) {
-                cells[(int) grid[x][y][z]].n++;
+    #pragma omp parallel
+    {
+        cell local_cells[N_SPECIES + 1];
+        init_cell(local_cells, 0);
+
+        #pragma omp for collapse(3)
+        for (int x = 0; x < N; x++) {
+            for (int y = 0; y < N; y++) {
+                for (int z = 0; z < N; z++) {
+                    local_cells[(int) grid[x][y][z]].n++;
+                }
+            }
+        }
+
+        #pragma omp critical
+        {
+            for (int i = 0; i <= N_SPECIES; i++) {
+                cells[i].n += local_cells[i].n;
             }
         }
     }
@@ -83,11 +97,11 @@ void get_max(cell *cells) {
 
 void simulation(char ***grid, long long N, int generations) {
     char ***new_grid = alloc_grid(N), ***temp;
+
+    // omp_set_num_threads(16);
     
     init_cell(max_cells, 0);
     count_cells(grid, N, max_cells);
-
-    omp_set_num_threads(128);
 
     for (int i = 0; i < generations; i++) {
         cell cells[N_SPECIES + 1];
