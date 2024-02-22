@@ -88,10 +88,7 @@ void simulation(char ***grid, long long N, int generations) {
 
     for (int i = 0; i < generations; i++) {
         
-        int cells[N_SPECIES + 1];
-        for (int j = 1; j <= N_SPECIES; j++) {
-            cells[j] = 0;
-        }
+        int cells[N_SPECIES + 1] = {0};
 
         for (int x = 0; x < N; x++) {
             for (int y = 0; y < N; y++) {
