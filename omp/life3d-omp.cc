@@ -60,7 +60,7 @@ void init_max_cell() {
 }
 
 void count_cells(char ***grid, long long N) {
-    #pragma omp parallel for collapse(3) reduction(+:max_cells)
+    #pragma omp parallel for reduction(+:max_cells)
     for (int x = 0; x < N; x++) {
         for (int y = 0; y < N; y++) {
             for (int z = 0; z < N; z++) {
@@ -91,7 +91,7 @@ void simulation(char ***grid, long long N, int generations) {
         
         int cells[N_SPECIES + 1] = {0};
 
-        #pragma omp parallel for collapse(3) reduction(+:cells)
+        #pragma omp parallel for reduction(+:cells)
         for (int x = 0; x < N; x++) {
             for (int y = 0; y < N; y++) {
                 for (int z = 0; z < N; z++) {
