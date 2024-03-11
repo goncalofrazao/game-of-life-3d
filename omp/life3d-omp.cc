@@ -1,9 +1,9 @@
 #include <iostream>
 using namespace std;
 
-#include <omp.h>
-#include <iomanip> // setprecision function
 #include <cstring> // memcpy function
+#include <iomanip> // setprecision function
+#include <omp.h>
 
 #include "grid.hh"
 
@@ -143,9 +143,9 @@ int main(int argc, char *argv[]) {
     double exec_time;
     exec_time = -omp_get_wtime();
 
-    simulation(grid, N, generations);
+	simulation(grid, N, generations);
 
-    exec_time += omp_get_wtime();
+	exec_time += omp_get_wtime();
 
     // Print the execution time to stderr
     cerr << fixed << setprecision(1) << exec_time << "s\n";
