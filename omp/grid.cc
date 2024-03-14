@@ -28,6 +28,7 @@ char ***alloc_grid(long long N) {
 		exit(1);
 	}
 
+#pragma omp parallel for
 	for (x = 0; x < N; x++) {
 		grid[x] = (char **)malloc(N * sizeof(char *));
 		if (grid[x] == NULL) {
@@ -41,8 +42,7 @@ char ***alloc_grid(long long N) {
 			exit(1);
 		}
 
-		for (y = 1; y < N; y++)
-			grid[x][y] = grid[x][0] + y * N;
+		for (y = 1; y < N; y++) grid[x][y] = grid[x][0] + y * N;
 	}
 
 	return grid;
@@ -58,8 +58,7 @@ char ***gen_initial_grid(long long N, float density, int input_seed) {
 	for (x = 0; x < N; x++)
 		for (y = 0; y < N; y++)
 			for (z = 0; z < N; z++)
-				if (r4_uni() < density)
-					grid[x][y][z] = (int)(r4_uni() * N_SPECIES) + 1;
+				if (r4_uni() < density) grid[x][y][z] = (int)(r4_uni() * N_SPECIES) + 1;
 
 	return grid;
 }

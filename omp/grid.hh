@@ -4,4 +4,4 @@
 char ***alloc_grid(long long N);
 char ***gen_initial_grid(long long N, float density, int input_seed);
 
-#endif // _GRID_HH_
+#endif	// _GRID_HH_

@@ -1,9 +1,10 @@
 #include <iostream>
 using namespace std;
 
-#include <cstring> // memcpy function
-#include <iomanip> // setprecision function
 #include <omp.h>
+
+#include <cstring>	// memcpy function
+#include <iomanip>	// setprecision function
 
 #include "grid.hh"
 
@@ -29,8 +30,7 @@ char next_state(int x, int y, int z, char ***grid, long long N) {
 		for (int j = -1; j <= 1; j++) {
 			ay = (y + j) % N;
 			for (int k = -1; k <= 1; k++) {
-				if (i == 0 && j == 0 && k == 0)
-					continue;
+				if (i == 0 && j == 0 && k == 0) continue;
 				az = (z + k) % N;
 				// Increment the number of live neighbors
 				sum += ((int)grid[ax][ay][az] != 0);
@@ -56,8 +56,7 @@ char next_state(int x, int y, int z, char ***grid, long long N) {
 		if (sum > 6 && sum < 11) {
 			int max = 1;
 			for (int i = 2; i <= N_SPECIES; i++)
-				if (n_species[i] > n_species[max])
-					max = i;
+				if (n_species[i] > n_species[max]) max = i;
 			return (char)max;
 		} else
 			return (char)0;
@@ -125,8 +124,7 @@ void simulation(char ***grid, long long N, int generations) {
 		for (int x = 0; x < N; x++) {
 			for (int y = 0; y < N; y++) {
 				for (int z = 0; z < N; z++) {
-					new_grid[x][y][z] =
-						next_state(x + N, y + N, z + N, grid, N);
+					new_grid[x][y][z] = next_state(x + N, y + N, z + N, grid, N);
 					cells[(int)new_grid[x][y][z]]++;
 				}
 			}
@@ -143,10 +141,9 @@ void simulation(char ***grid, long long N, int generations) {
 }
 
 int main(int argc, char *argv[]) {
-
 	// Check if the input is valid
-	if (argc != 5 || atoi(argv[1]) <= 0 || atoi(argv[2]) <= 0 ||
-		atof(argv[3]) < 0 || atof(argv[3]) > 1) {
+	if (argc != 5 || atoi(argv[1]) <= 0 || atoi(argv[2]) <= 0 || atof(argv[3]) < 0 ||
+		atof(argv[3]) > 1) {
 		cerr << "Usage: " << argv[0]
 			 << " <generations (positive integer)> <N (positive integer)> "
 				"<density (float between 0 and 1)> <seed (integer)>\n";
