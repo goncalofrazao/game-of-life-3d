@@ -11,6 +11,7 @@ using namespace std;
 
 #define N_SPECIES 9
 
+int local_cells[N_SPECIES + 1];
 int max_cells[N_SPECIES + 1];
 int generation[N_SPECIES + 1];
 
@@ -58,18 +59,18 @@ void print_result(char ***grid, long long N) {
 	}
 }
 
-void init_max_cell() {
-	for (int j = 1; j <= N_SPECIES; j++) {
-		max_cells[j] = 0;
-		generation[j] = 0;
+void init_max_cells() {
+	for (int i = 1; i <= N_SPECIES; i++) {
+		generation[i] = 0;
+		max_cells[i] = 0;
 	}
 }
 
-void count_cells(char ***grid, long long N) {
-	for (int x = 0; x < N; x++) {
+void count_cells(char ***grid, long long N, long long block_size) {
+	for (int x = 1; x <= block_size; x++) {
 		for (int y = 0; y < N; y++) {
 			for (int z = 0; z < N; z++) {
-				max_cells[(int)grid[x][y][z]]++;
+				local_cells[(int)grid[x][y][z]]++;
 			}
 		}
 	}
@@ -85,15 +86,20 @@ void get_max(int *cells, int gen) {
 }
 
 void simulation(char ***grid, long long N, int generations, int rank, int size) {
-	char ***new_grid = alloc_grid(N, BLOCK_SIZE(rank, size, N)), ***temp;
+	long long block_size = BLOCK_SIZE(rank, size, N);
+	char ***new_grid = alloc_grid(N, block_size + 2), ***temp;
+	long long N2 = N * N;
 
-	init_max_cell();
-	count_cells(grid, N);
+	MPI_Request reqs[4];
+
+	if (!rank) init_max_cells();
+	count_cells(grid, N, block_size);
+	MPI_Reduce(local_cells, max_cells, N_SPECIES + 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
 	for (int i = 0; i < generations; i++) {
 		int cells[N_SPECIES + 1] = {0};
 
-		for (int x = 0; x < N; x++) {
+		for (int x = 1; x <= block_size; x++) {
 			for (int y = 0; y < N; y++) {
 				for (int z = 0; z < N; z++) {
 					new_grid[x][y][z] = next_state(x + N, y + N, z + N, grid, N);
@@ -102,7 +108,15 @@ void simulation(char ***grid, long long N, int generations, int rank, int size) 
 			}
 		}
 
-		get_max(cells, i + 1);
+		MPI_Isend(new_grid[1][0], N2, MPI_CHAR, PREV_BLOCK(rank, size), 0, MPI_COMM_WORLD, reqs);
+		MPI_Isend(new_grid[block_size][0], N2, MPI_CHAR, NEXT_BLOCK(rank, size), 1, MPI_COMM_WORLD, reqs + 1);
+		MPI_Irecv(new_grid[0][0], N2, MPI_CHAR, PREV_BLOCK(rank, size), 1, MPI_COMM_WORLD, reqs + 2);
+		MPI_Irecv(new_grid[block_size + 1][0], N2, MPI_CHAR, NEXT_BLOCK(rank, size), 0, MPI_COMM_WORLD, reqs + 3);
+
+		MPI_Reduce(cells, local_cells, N_SPECIES + 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+		if (!rank) get_max(local_cells, i + 1);
+
+		MPI_Waitall(4, reqs, MPI_STATUSES_IGNORE);
 
 		temp = grid;
 		grid = new_grid;
@@ -117,11 +131,8 @@ int main(int argc, char *argv[]) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-	if (argc != 5 || atoi(argv[1]) <= 0 || atoi(argv[2]) <= 0 || atof(argv[3]) < 0 ||
-		atof(argv[3]) > 1) {
-		cerr << "Usage: " << argv[0]
-			 << " <generations (positive integer)> <N (positive integer)> <density(float between 0 "
-				"and 1)><seed(integer)>\n ";
+	if (argc != 5 || atoi(argv[1]) <= 0 || atoi(argv[2]) <= 0 || atof(argv[3]) < 0 || atof(argv[3]) > 1) {
+		cerr << "Usage: " << argv[0] << " <generations> <N> <density> <seed>\n";
 		return 1;
 	}
 
@@ -134,15 +145,17 @@ int main(int argc, char *argv[]) {
 
 	char ***grid = gen_initial_grid(N, density, seed, rank, size);
 
+	MPI_Barrier(MPI_COMM_WORLD);
 	exec_time = -MPI_Wtime();
 
-	// simulation(grid, N, generations);
+	simulation(grid, N, generations, rank, size);
 
+	MPI_Barrier(MPI_COMM_WORLD);
 	exec_time += MPI_Wtime();
 
-	// cerr << fixed << setprecision(1) << exec_time << "s\n";
+	if (!rank) cerr << fixed << setprecision(1) << exec_time << "s\n";
 
-	// print_result(grid, N);
+	if (!rank) print_result(grid, N);
 
 	MPI_Finalize();
 }
