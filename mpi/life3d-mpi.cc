@@ -21,7 +21,7 @@ char next_state(int x, int y, int z, char ***grid, long long N) {
 	int n_species[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	for (int i = -1; i <= 1; i++) {
-		ax = (x + i) % N;
+		ax = x + i;
 		for (int j = -1; j <= 1; j++) {
 			ay = (y + j) % N;
 			for (int k = -1; k <= 1; k++) {
@@ -99,19 +99,33 @@ void simulation(char ***grid, long long N, int generations, int rank, int size) 
 	for (int i = 0; i < generations; i++) {
 		int cells[N_SPECIES + 1] = {0};
 
-		for (int x = 1; x <= block_size; x++) {
+		MPI_Irecv(new_grid[0][0], N2, MPI_CHAR, PREV_BLOCK(rank, size), 1, MPI_COMM_WORLD, reqs + 2);
+		MPI_Irecv(new_grid[block_size + 1][0], N2, MPI_CHAR, NEXT_BLOCK(rank, size), 0, MPI_COMM_WORLD, reqs + 3);
+
+		for (int y = 0; y < N; y++) {
+			for (int z = 0; z < N; z++) {
+				new_grid[1][y][z] = next_state(1, y + N, z + N, grid, N);
+				cells[(int)new_grid[1][y][z]]++;
+			}
+		}
+		MPI_Isend(new_grid[1][0], N2, MPI_CHAR, PREV_BLOCK(rank, size), 0, MPI_COMM_WORLD, reqs);
+
+		for (int y = 0; y < N; y++) {
+			for (int z = 0; z < N; z++) {
+				new_grid[block_size][y][z] = next_state(block_size, y + N, z + N, grid, N);
+				cells[(int)new_grid[block_size][y][z]]++;
+			}
+		}
+		MPI_Isend(new_grid[block_size][0], N2, MPI_CHAR, NEXT_BLOCK(rank, size), 1, MPI_COMM_WORLD, reqs + 1);
+
+		for (int x = 2; x < block_size; x++) {
 			for (int y = 0; y < N; y++) {
 				for (int z = 0; z < N; z++) {
-					new_grid[x][y][z] = next_state(x + N, y + N, z + N, grid, N);
+					new_grid[x][y][z] = next_state(x, y + N, z + N, grid, N);
 					cells[(int)new_grid[x][y][z]]++;
 				}
 			}
 		}
-
-		MPI_Isend(new_grid[1][0], N2, MPI_CHAR, PREV_BLOCK(rank, size), 0, MPI_COMM_WORLD, reqs);
-		MPI_Isend(new_grid[block_size][0], N2, MPI_CHAR, NEXT_BLOCK(rank, size), 1, MPI_COMM_WORLD, reqs + 1);
-		MPI_Irecv(new_grid[0][0], N2, MPI_CHAR, PREV_BLOCK(rank, size), 1, MPI_COMM_WORLD, reqs + 2);
-		MPI_Irecv(new_grid[block_size + 1][0], N2, MPI_CHAR, NEXT_BLOCK(rank, size), 0, MPI_COMM_WORLD, reqs + 3);
 
 		MPI_Reduce(cells, local_cells, N_SPECIES + 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 		if (!rank) get_max(local_cells, i + 1);
