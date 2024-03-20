@@ -1,6 +1,8 @@
 #include <iostream>
 using namespace std;
 
+#include <mpi.h>
+
 #include "grid.hh"
 
 #define N_SPECIES 9
@@ -51,53 +53,30 @@ char ***gen_initial_grid(long long N, float density, int input_seed, int rank, i
 	int x, y, z;
 	char aux;
 
-	long long block_low = BLOCK_LOW(rank, size, N) - 1;
-	long long block_high = BLOCK_HIGH(rank, size, N) + 1;
+	MPI_Request reqs[4];
+
+	long long block_low = BLOCK_LOW(rank, size, N);
+	long long block_high = BLOCK_HIGH(rank, size, N);
 	long long block_size = block_high - block_low + 1;
 
-	long long last_col = block_size - 1;
-	long long first_col = 0;
-
-	char ***grid = alloc_grid(N, block_size);
+	char ***grid = alloc_grid(N, block_size + 2);
 
 	init_r4uni(input_seed);
 
-	if (rank == 0) {
-		block_high++;
-		for (x = 1; x < N; x++)
-			for (y = 0; y < N; y++)
-				for (z = 0; z < N; z++)
-					if (r4_uni() < density) {
-						aux = (int)(r4_uni() * N_SPECIES) + 1;
-						if (x <= block_high) grid[x][y][z] = aux;
-					}
-
+	for (x = 0; x < N; x++)
 		for (y = 0; y < N; y++)
 			for (z = 0; z < N; z++)
-				if (r4_uni() < density) grid[0][y][z] = (int)(r4_uni() * N_SPECIES) + 1;
+				if (r4_uni() < density) {
+					aux = (int)(r4_uni() * N_SPECIES) + 1;
+					if (BLOCK_OWNER(x, size, N) == rank) grid[x - block_low + 1][y][z] = aux;
+				}
 
-	} else if (rank == size - 1) {
-		for (y = 0; y < N; y++)
-			for (z = 0; z < N; z++)
-				if (r4_uni() < density) grid[last_col][y][z] = (int)(r4_uni() * N_SPECIES) + 1;
+	MPI_Isend(grid[1][0], N * N, MPI_CHAR, (rank - 1 + size) % size, 0, MPI_COMM_WORLD, reqs);
+	MPI_Isend(grid[block_size][0], N * N, MPI_CHAR, (rank + 1) % size, 0, MPI_COMM_WORLD, reqs + 1);
+	MPI_Irecv(grid[0][0], N * N, MPI_CHAR, (rank - 1 + size) % size, 0, MPI_COMM_WORLD, reqs + 2);
+	MPI_Irecv(grid[block_size + 1][0], N * N, MPI_CHAR, (rank + 1) % size, 0, MPI_COMM_WORLD, reqs + 3);
 
-		for (x = 1; x < N; x++)
-			for (y = 0; y < N; y++)
-				for (z = 0; z < N; z++)
-					if (r4_uni() < density) {
-						aux = (int)(r4_uni() * N_SPECIES) + 1;
-						if (x >= block_low) grid[x - block_low][y][z] = aux;
-					}
-
-	} else {
-		for (x = 0; x < N; x++)
-			for (y = 0; y < N; y++)
-				for (z = 0; z < N; z++)
-					if (r4_uni() < density) {
-						aux = (int)(r4_uni() * N_SPECIES) + 1;
-						if (x >= block_low && x <= block_high) grid[x - block_low][y][z] = aux;
-					}
-	}
+	MPI_Waitall(4, reqs, MPI_STATUSES_IGNORE);
 
 	return grid;
 }
