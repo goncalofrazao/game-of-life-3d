@@ -71,10 +71,10 @@ char ***gen_initial_grid(long long N, float density, int input_seed, int rank, i
 					if (BLOCK_OWNER(x, size, N) == rank) grid[x - block_low + 1][y][z] = aux;
 				}
 
-	MPI_Isend(grid[1][0], N * N, MPI_CHAR, (rank - 1 + size) % size, 0, MPI_COMM_WORLD, reqs);
-	MPI_Isend(grid[block_size][0], N * N, MPI_CHAR, (rank + 1) % size, 0, MPI_COMM_WORLD, reqs + 1);
-	MPI_Irecv(grid[0][0], N * N, MPI_CHAR, (rank - 1 + size) % size, 0, MPI_COMM_WORLD, reqs + 2);
-	MPI_Irecv(grid[block_size + 1][0], N * N, MPI_CHAR, (rank + 1) % size, 0, MPI_COMM_WORLD, reqs + 3);
+	MPI_Isend(grid[1][0], N * N, MPI_CHAR, PREV_BLOCK(rank, size), 0, MPI_COMM_WORLD, reqs);
+	MPI_Isend(grid[block_size][0], N * N, MPI_CHAR, NEXT_BLOCK(rank, size), 1, MPI_COMM_WORLD, reqs + 1);
+	MPI_Irecv(grid[0][0], N * N, MPI_CHAR, PREV_BLOCK(rank, size), 1, MPI_COMM_WORLD, reqs + 2);
+	MPI_Irecv(grid[block_size + 1][0], N * N, MPI_CHAR, NEXT_BLOCK(rank, size), 0, MPI_COMM_WORLD, reqs + 3);
 
 	MPI_Waitall(4, reqs, MPI_STATUSES_IGNORE);
 
