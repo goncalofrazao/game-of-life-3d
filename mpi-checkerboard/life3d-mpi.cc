@@ -11,11 +11,12 @@
 
 using namespace std;
 
-// Global variables to store the
+// Global variables to store the number of cells of each species in the local grid, the maximum number of cells of each species and the generation in which it was reached
 int local_cells[N_SPECIES + 1];
 int max_cells[N_SPECIES + 1];
 int generation[N_SPECIES + 1];
 
+// MPI data types and requests
 MPI_Datatype x_plane, y_plane, z_plane;
 MPI_Request send_x[2], send_y[2], send_z[2], recv_x[2], recv_y[2], recv_z[2];
 int _up, _down, _left, _right, _front, _back;
@@ -99,17 +100,23 @@ void get_max(int *cells, int gen) {
 	}
 }
 
+// Function assynchronously send boundaries and test if they have been received - returns 1 if so
 int test_recv_data(MPI_Comm grid_comm, char ***new_grid, long long local_N[]) {
 	int flag;
+
 	switch (faces_recv) {
-		case 0:
+		case 0: 
+			// Send x-plane boundaries assynchronously
 			faces_recv++;
 			MPI_Isend(&new_grid[1][1][1], 1, x_plane, _down, 1, grid_comm, send_x);
 			MPI_Isend(&new_grid[local_N[0]][1][1], 1, x_plane, _up, 0, grid_comm, send_x + 1);
 			break;
 
-		case 1:
+		case 1: 
+			// Test if x-plane boundaries have been received
 			MPI_Testall(2, recv_x, &flag, MPI_STATUSES_IGNORE);
+			
+			//If so, send y-plane boundaries assynchronously
 			if (flag) {
 				faces_recv++;  // faces_recv to 2 if x faces have been received
 				MPI_Isend(&new_grid[0][1][1], 1, y_plane, _left, 1, grid_comm, send_y);
@@ -117,10 +124,13 @@ int test_recv_data(MPI_Comm grid_comm, char ***new_grid, long long local_N[]) {
 			}
 			break;
 
-		case 2:
+		case 2: 
+			// Test if y-plane boundaries have been received
 			MPI_Testall(2, recv_y, &flag, MPI_STATUSES_IGNORE);
+
+			// If so, send z-plane boundaries assynchronously
 			if (flag) {
-				faces_recv++;
+				faces_recv++; // faces_recv to 3 if y faces have been received
 				MPI_Isend(&new_grid[0][0][1], 1, z_plane, _back, 1, grid_comm, send_z);
 				MPI_Isend(&new_grid[0][0][local_N[2]], 1, z_plane, _front, 0, grid_comm, send_z + 1);
 				return 1;
@@ -128,6 +138,8 @@ int test_recv_data(MPI_Comm grid_comm, char ***new_grid, long long local_N[]) {
 			break;
 
 		case 4:
+			// Test if all boundaries have been sent and received
+			// Works as a barrier to synchronize all nodes
 			MPI_Waitall(2, send_x, MPI_STATUSES_IGNORE);
 			MPI_Waitall(2, send_y, MPI_STATUSES_IGNORE);
 			MPI_Waitall(2, send_z, MPI_STATUSES_IGNORE);
@@ -141,22 +153,26 @@ int test_recv_data(MPI_Comm grid_comm, char ***new_grid, long long local_N[]) {
 	return 0;
 }
 
+// Function to receive the boundaries from the neighbor nodes assynchronously
 void recv_all(MPI_Comm grid_comm, char ***new_grid, long long local_N[]) {
+	// Receive the x-plane boundaries from the up and down neighbors
 	MPI_Irecv(&new_grid[0][1][1], 1, x_plane, _down, 0, grid_comm, recv_x);
 	MPI_Irecv(&new_grid[local_N[0] + 1][1][1], 1, x_plane, _up, 1, grid_comm, recv_x + 1);
 
+	// Receive the y-plane boundaries from the left and right neighbors
 	MPI_Irecv(&new_grid[0][0][1], 1, y_plane, _right, 0, grid_comm, recv_y);
 	MPI_Irecv(&new_grid[0][local_N[1] + 1][1], 1, y_plane, _left, 1, grid_comm, recv_y + 1);
 
+	// Receive the z-plane boundaries from the front and back neighbors
 	MPI_Irecv(&new_grid[0][0][0], 1, z_plane, _back, 0, grid_comm, recv_z);
 	MPI_Irecv(&new_grid[0][0][local_N[2] + 1], 1, z_plane, _front, 1, grid_comm, recv_z + 1);
 }
 
 // Function to simulate the game of life
-void simulation(char ***grid, long long local_N[], int generations, int rank, MPI_Comm grid_comm) {
-	// Allocate memory for the 'next generation' grid, also with ghost cells
-	char ***new_grid = alloc_grid(local_N[0] + 2, local_N[1] + 2, local_N[2] + 2), ***temp;
-
+void simulation(char ***grid, char*** new_grid, long long local_N[], int generations, int rank, MPI_Comm grid_comm) {
+	// Declare a temporary grid pointer
+	char ***temp;
+	
 	// Initialize the global variables in root node
 	if (!rank) init_max_cells();
 
@@ -170,18 +186,22 @@ void simulation(char ***grid, long long local_N[], int generations, int rank, MP
 		int cells[N_SPECIES + 1] = {0};
 		faces_recv = 0;
 
+		// Receive the boundaries from the neighbor nodes assynchronously (Irecv)
 		recv_all(grid_comm, new_grid, local_N);
 
+		// Calculate the next state of the boundary cells (x = 1, x = local_N[0])
 		for (int y = 1; y <= local_N[1]; y++) {
 			for (int z = 1; z <= local_N[2]; z++) {
-				new_grid[1][y][z] = next_state(1, y, z, grid);
+				new_grid[1][y][z] = next_state(1, y, z, grid); // x = 1
 				cells[(int)new_grid[1][y][z]]++;
-				new_grid[local_N[0]][y][z] = next_state(local_N[0], y, z, grid);
+				new_grid[local_N[0]][y][z] = next_state(local_N[0], y, z, grid); // x = local_N[0]
 				cells[(int)new_grid[local_N[0]][y][z]]++;
 			}
 		}
+		// Send x plane boundaries
 		test_recv_data(grid_comm, new_grid, local_N);
 
+		// Calculate the next state of the boundary cells (y = 1, y = local_N[1])
 		for (int x = 2; x < local_N[0]; x++) {
 			for (int z = 1; z <= local_N[2]; z++) {
 				new_grid[x][1][z] = next_state(x, 1, z, grid);
@@ -190,8 +210,10 @@ void simulation(char ***grid, long long local_N[], int generations, int rank, MP
 				cells[(int)new_grid[x][local_N[1]][z]]++;
 			}
 		}
+		// Test if x plane boundaries have been received and if so send y plane boundaries
 		test_recv_data(grid_comm, new_grid, local_N);
 
+		// Calculate the next state of the boundary cells (z = 1, z = local_N[2])
 		for (int x = 2; x < local_N[0]; x++) {
 			for (int y = 2; y < local_N[1]; y++) {
 				new_grid[x][y][1] = next_state(x, y, 1, grid);
@@ -200,9 +222,10 @@ void simulation(char ***grid, long long local_N[], int generations, int rank, MP
 				cells[(int)new_grid[x][y][local_N[2]]]++;
 			}
 		}
+		// Test if y and x plane boundaries have been received and if so send z plane boundaries
 		test_recv_data(grid_comm, new_grid, local_N);
 
-		// For each cell of the local grid, calculate the next state and update the local cells array
+		// Calculate the next state for the inner cells of the local grid
 		for (int x = 2; x < local_N[0]; x++) {
 			for (int y = 2; y < local_N[1]; y++) {
 				for (int z = 2; z < local_N[2]; z++) {
@@ -210,6 +233,8 @@ void simulation(char ***grid, long long local_N[], int generations, int rank, MP
 					cells[(int)new_grid[x][y][z]]++;
 				}
 			}
+
+			// Check if all boundaries where already received and sent to the neighbors
 			test_recv_data(grid_comm, new_grid, local_N);
 		}
 
@@ -219,11 +244,9 @@ void simulation(char ***grid, long long local_N[], int generations, int rank, MP
 		// Update the global variables max_cells and generation (only in root node)
 		if (!rank) get_max(local_cells, i + 1);
 
-		// Exchange the boundaries between the neighbor nodes in the 3D grid
-		// exchange_boudaries(new_grid, local_N, grid_comm);
+		// Syncronize all nodes before the next generation: make sure boundaries were exchanged
 		while (!test_recv_data(grid_comm, new_grid, local_N));
-
-		faces_recv++;
+		faces_recv++; // faces_recv to 4 if z faces have been received
 		test_recv_data(grid_comm, new_grid, local_N);
 
 		// Swap the pointers of the grid and the new_grid
@@ -254,10 +277,12 @@ void mpi_checkerboard_3d(int N, int generations, float density, int seed) {
 	// Calculate the size of the local grid for the current node (3D block)
 	long long local_N[3] = {BLOCK_SIZE(coords[0], dims[0], N), BLOCK_SIZE(coords[1], dims[1], N), BLOCK_SIZE(coords[2], dims[2], N)};
 
+	// Compute node neighbors in the 3D grid
 	MPI_Cart_shift(grid_comm, 0, 1, &_down, &_up);
 	MPI_Cart_shift(grid_comm, 1, 1, &_left, &_right);
 	MPI_Cart_shift(grid_comm, 2, 1, &_back, &_front);
 
+	// Declare MPI datatype for the cube planes
 	MPI_Type_vector(local_N[1], local_N[2], local_N[2] + 2, MPI_CHAR, &x_plane);
 	MPI_Type_vector(local_N[0] + 2, local_N[2], (local_N[1] + 2) * (local_N[2] + 2), MPI_CHAR, &y_plane);
 	MPI_Type_vector((local_N[0] + 2) * (local_N[1] + 2), 1, local_N[2] + 2, MPI_CHAR, &z_plane);
@@ -265,16 +290,16 @@ void mpi_checkerboard_3d(int N, int generations, float density, int seed) {
 	MPI_Type_commit(&y_plane);
 	MPI_Type_commit(&z_plane);
 
-	// Generate the initial grid
+	// Generate the initial grid and a 'next generation' grid (with ghost cells)
 	char ***grid = gen_initial_grid(N, density, seed, coords, dims);
+	char ***new_grid = alloc_grid(local_N[0] + 2, local_N[1] + 2, local_N[2] + 2);
 
 	// Mark the initial time instant before the simulation starts (using MPI_barrier to synchronize all nodes)
 	MPI_Barrier(MPI_COMM_WORLD);
 	double exec_time = -MPI_Wtime();
 
 	// Run the simulation
-	simulation(grid, local_N, generations, rank, grid_comm);
-	// print_grid(grid, N, coords, dims);
+	simulation(grid, new_grid, local_N, generations, rank, grid_comm);
 
 	// Mark the final time instant after the simulation ends (using MPI_barrier to synchronize all nodes)
 	MPI_Barrier(MPI_COMM_WORLD);
