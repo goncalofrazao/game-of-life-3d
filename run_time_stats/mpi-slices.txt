@@ -1,0 +1,118 @@
+[ist199945@lab3p4:/mnt/cirrus/users/4/5/ist199945]$ mpirun -hostfile h1.txt game-of-life-3d/mpi/life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied (1PC * 1P) = 1 CPU
+174.3s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+
+[ist199945@lab3p4:/mnt/cirrus/users/4/5/ist199945]$ mpirun -hostfile h2.txt game-of-life-3d/mpi/life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied (1PC * 2P) = 2 CPU
+87.2s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+
+[ist199945@lab3p4:/mnt/cirrus/users/4/5/ist199945]$ mpirun -hostfile h4.txt game-of-life-3d/mpi/life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied (1PC * 4P) = 4 CPU
+43.6s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+
+[ist199945@lab3p4:/mnt/cirrus/users/4/5/ist199945]$ mpirun -hostfile h8.txt game-of-life-3d/mpi/life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied (2PC * 4P) = 8 CPU
+21.8s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+
+[ist199945@lab3p4:/mnt/cirrus/users/4/5/ist199945]$ mpirun -hostfile h16.txt game-of-life-3d/mpi/life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied (4PC * 4P) = 16 CPU
+10.9s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+
+[ist199945@lab3p4:/mnt/cirrus/users/4/5/ist199945]$ mpirun -hostfile h32.txt game-of-life-3d/mpi/life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied (8PC * 4P) = 32 CPU
+5.5s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+
+[ist199945@lab3p4:/mnt/cirrus/users/4/5/ist199945]$ mpirun -hostfile h64.txt game-of-life-3d/mpi/life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/4/5/ist199945/.bashrc: Permission denied (16PC * 4P) = 64 CPU
+2.8s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+
+[ist199945@lab3p4:/mnt/cirrus/users/4/5/ist199945]$ 

@@ -1,0 +1,75 @@
+ROOT NODE: lab3p4
+
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -hostfile nodes.txt  life3d-mpi 3 1024 .4 100 
+(1PC * 1P) = 1 CPU
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+110.8s
+
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -hostfile nodes.txt  life3d-mpi 3 1024 .4 100 
+(1PC * 2P) = 2 CPU
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+55.9s
+
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -hostfile nodes.txt  life3d-mpi 3 1024 .4 100
+(1PC * 4P) = 4 CPU
+28.5s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -hostfile nodes.txt  life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+(2PC * 4P) = 8 CPU
+14.3s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -hostfile nodes.txt  life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+(4PC * 4P) = 16 CPU
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+7.3s
+
+
+
+
+
