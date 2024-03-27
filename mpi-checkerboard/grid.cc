@@ -53,6 +53,7 @@ char ***alloc_grid(long long x_dim, long long y_dim, long long z_dim) {
 	}
 
 	// Point each element of the grid to the corresponding element of the block
+#pragma omp parallel for
 	for (x = 0; x < x_dim; x++) {
 		for (y = 0; y < y_dim; y++) {
 			grid[x][y] = block + x * y_dim * z_dim + y * z_dim;

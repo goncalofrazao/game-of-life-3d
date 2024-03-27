@@ -82,6 +82,7 @@ void init_max_cells() {
 
 // Function to count the number of cells of each species in the 'local' grid (used only for generation 0)
 void count_cells(char ***grid, long long local_N[]) {
+#pragma omp parallel for reduction(+ : local_cells)
 	for (int x = 1; x <= local_N[0]; x++) {
 		for (int y = 1; y <= local_N[1]; y++) {
 			for (int z = 1; z <= local_N[2]; z++) {
@@ -118,6 +119,7 @@ void simulation(char ***grid, char ***new_grid, long long local_N[], int generat
 		// Initialize the local cells array (also counts dead cells: N_SPECIES+1)
 		int cells[N_SPECIES + 1] = {0};
 
+#pragma omp parallel for reduction(+ : cells)
 		// Calculate the next state for the inner cells of the local grid
 		for (int x = 1; x <= local_N[0]; x++) {
 			for (int y = 1; y <= local_N[1]; y++) {
@@ -202,7 +204,8 @@ int main(int argc, char *argv[]) {
 	int seed = atoi(argv[4]);
 
 	// Initialize MPI
-	MPI_Init(&argc, &argv);
+	int provided;
+	MPI_Init_thread(&argc, &argv, MPI_THREAD_SERIALIZED, &provided);
 
 	// Run the simulation - checkerboard method
 	mpi_checkerboard_3d(N, generations, density, seed);
