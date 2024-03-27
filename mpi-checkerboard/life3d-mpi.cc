@@ -204,8 +204,7 @@ int main(int argc, char *argv[]) {
 	int seed = atoi(argv[4]);
 
 	// Initialize MPI
-	int provided;
-	MPI_Init_thread(&argc, &argv, MPI_THREAD_SERIALIZED, &provided);
+	MPI_Init(&argc, &argv);
 
 	// Run the simulation - checkerboard method
 	mpi_checkerboard_3d(N, generations, density, seed);
