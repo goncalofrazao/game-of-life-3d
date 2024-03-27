@@ -4,7 +4,6 @@
 #include <cstring>	// memcpy function
 #include <iomanip>	// setprecision function
 #include <iostream>
-
 #include "grid.hh"
 
 #define N_SPECIES 9

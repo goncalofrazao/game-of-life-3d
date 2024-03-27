@@ -1,0 +1,197 @@
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$  mpirun -host lab3p4 life3d-mpi 3 1024 .4 100
+(1PC * 1P * 1T) = 1CPU
+110.9s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ export OMP_NUM_THREADS=1
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -host lab3p4,lab3p1,lab3p2,lab3p7 life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied (4PC * 1P * 1T) = 4CPU
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+27.7s
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ export OMP_NUM_THREADS=2
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -host lab3p4,lab3p1,lab3p2,lab3p7 life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied (4PC * 1P * 2T) = 8CPU
+14.2s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ export OMP_NUM_THREADS=4
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -host lab3p4,lab3p1,lab3p2,lab3p7 life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied (4PC * 1P * 4T) = 16CPU
+7.4s
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ export OMP_NUM_THREADS=1
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -host lab3p4,lab3p1,lab3p2,lab3p7,lab5p1,lab5p2,lab5p3,lab5p4 life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied (8PC * 1P * 1T) = 8CPU
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+13.9s
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ export OMP_NUM_THREADS=2
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -host lab3p4,lab3p1,lab3p2,lab3p7,lab5p1,lab5p2,lab5p3,lab5p4 life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied (8PC * 1P * 2T) = 16CPU
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+7.2s
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ export OMP_NUM_THREADS=4
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -host lab3p4,lab3p1,lab3p2,lab3p7,lab5p1,lab5p2,lab5p3,lab5p4 life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied (8PC * 1P * 4T) = 32CPU
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+3.7s
+
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ export OMP_NUM_THREADS=1
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -host lab3p4,lab3p1,lab3p2,lab3p7,lab5p1,lab5p2,lab5p3,lab5p4,lab5p6,lab2p9,lab5p8,lab5p9,lab5p10,lab3p9,lab3p10,lab5p5 life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied (16PC * 1P * 1T) = 16CPU
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+7.5s
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ export OMP_NUM_THREADS=2
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -host lab3p4,lab3p1,lab3p2,lab3p7,lab5p1,lab5p2,lab5p3,lab5p4,lab5p6,lab2p9,lab5p8,lab5p9,lab5p10,lab3p9,lab3p10,lab5p5 life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied (16PC * 1P * 2T) = 32CPU
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
+5.1s (merdoso...)
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ export OMP_NUM_THREADS=4
+ist1111019@lab3p4:/mnt/cirrus/users/1/9/ist1111019/game-of-life-3d/mpi-checkerboard$ mpirun -host lab3p4,lab3p1,lab3p2,lab3p7,lab5p1,lab5p2,lab5p3,lab5p4,lab5p6,lab2p9,lab5p8,lab5p9,lab5p10,lab3p9,lab3p10,lab5p5 life3d-mpi 3 1024 .4 100
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied
+bash: /afs/.ist.utl.pt/users/1/9/ist1111019/.bashrc: Permission denied (16PC * 1P * 4T) = 64CPU
+4.9s (mega mega merdoso)
+1 99923786 1
+2 90413714 1
+3 83137654 1
+4 77287897 1
+5 72448825 1
+6 68444736 1
+7 65198270 1
+8 62633412 1
+9 60611199 1
