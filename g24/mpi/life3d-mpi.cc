@@ -4,6 +4,7 @@
 #include <cstring>	// memcpy function
 #include <iomanip>	// setprecision function
 #include <iostream>
+
 #include "grid.hh"
 
 #define N_SPECIES 9
@@ -118,8 +119,8 @@ void simulation(char ***grid, char ***new_grid, long long local_N[], int generat
 		// Initialize the local cells array (also counts dead cells: N_SPECIES+1)
 		int cells[N_SPECIES + 1] = {0};
 
-#pragma omp parallel for reduction(+ : cells)
 		// Calculate the next state for the inner cells of the local grid
+#pragma omp parallel for reduction(+ : cells)
 		for (int x = 1; x <= local_N[0]; x++) {
 			for (int y = 1; y <= local_N[1]; y++) {
 				for (int z = 1; z <= local_N[2]; z++) {
